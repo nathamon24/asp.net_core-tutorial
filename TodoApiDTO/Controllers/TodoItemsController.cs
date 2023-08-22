@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TodoApi.Models;
 
 namespace TodoApi.Controllers
@@ -16,6 +19,7 @@ namespace TodoApi.Controllers
         }
 
         // GET: api/TodoItems
+        #region snippet
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItems()
         {
@@ -24,7 +28,6 @@ namespace TodoApi.Controllers
                 .ToListAsync();
         }
 
-        // GET: api/TodoItems/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItemDTO>> GetTodoItem(long id)
         {
@@ -37,8 +40,7 @@ namespace TodoApi.Controllers
 
             return ItemToDTO(todoItem);
         }
-        // PUT: api/TodoItems/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTodoItem(long id, TodoItemDTO todoItemDTO)
         {
@@ -67,8 +69,7 @@ namespace TodoApi.Controllers
 
             return NoContent();
         }
-        // POST: api/TodoItems
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
         [HttpPost]
         public async Task<ActionResult<TodoItemDTO>> CreateTodoItem(TodoItemDTO todoItemDTO)
         {
@@ -87,7 +88,6 @@ namespace TodoApi.Controllers
                 ItemToDTO(todoItem));
         }
 
-        // DELETE: api/TodoItems/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodoItem(long id)
         {
@@ -104,10 +104,8 @@ namespace TodoApi.Controllers
             return NoContent();
         }
 
-        private bool TodoItemExists(long id)
-        {
-            return _context.TodoItems.Any(e => e.Id == id);
-        }
+        private bool TodoItemExists(long id) =>
+             _context.TodoItems.Any(e => e.Id == id);
 
         private static TodoItemDTO ItemToDTO(TodoItem todoItem) =>
             new TodoItemDTO
@@ -115,6 +113,27 @@ namespace TodoApi.Controllers
                 Id = todoItem.Id,
                 Name = todoItem.Name,
                 IsComplete = todoItem.IsComplete
-            };
+            };       
     }
+    #endregion
 }
+
+/*  // This method is just for testing populating the secret field
+        // POST: api/TodoItems/test
+        [HttpPost("test")]
+        public async Task<ActionResult<TodoItem>> PostTestTodoItem(TodoItem todoItem)
+        {
+            _context.TodoItems.Add(todoItem);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetTodoItem), new { id = todoItem.Id }, todoItem);
+        }
+
+        // This method is just for testing
+        // GET: api/TodoItems/test
+        [HttpGet("test")]
+        public async Task<ActionResult<IEnumerable<TodoItem>>> GetTestTodoItems()
+        {
+            return await _context.TodoItems.ToListAsync();
+        }
+*/
